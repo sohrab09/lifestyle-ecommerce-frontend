@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const AppDownloadBanner = () => {
     return (
         <section className="bg-slate-100 py-12 md:py-16 overflow-hidden my-8">
@@ -12,7 +10,7 @@ export const AppDownloadBanner = () => {
                             Make your online shop easier with our mobile app
                         </h2>
                         <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                            Wafilife makes Islamic shopping easy—order authentic books, gifts, and lifestyle products delivered straight to your doorstep.
+                            Shaofi Hat makes Islamic shopping easy—order authentic books, gifts, and lifestyle products delivered straight to your doorstep.
                         </p>
                         <div className="pt-2 flex justify-center lg:justify-start">
                             <a

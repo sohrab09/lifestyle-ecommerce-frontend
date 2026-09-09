@@ -1,4 +1,3 @@
-import React from 'react';
 import { Header } from './components/layout/Header';
 import { AppRoutes } from './routes/AppRoutes';
 import { Footer } from './components/layout/Footer';

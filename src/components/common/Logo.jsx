@@ -1,43 +1,51 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { ShoppingBag } from 'lucide-react';
 
-// আপনার আপলোড করা লোগোর ইমেজ লিঙ্ক বা পাথ
-const LOGO_SRC = "https://i.ibb.co/L5Qz88m/shopping-hat-logo.jpg";
-
-export const Logo = ({ size = 'md', showText = true, className = '' }) => {
-    // সাইজ অনুযায়ী লোগোর ডাইমেনশন নির্ধারণ
+export const Logo = ({ size = 'md', showText = true, isLink = true, className = '' }) => {
+    // সাইজ অনুযায়ী লোগো ডাইমেনশন
     const sizeClasses = {
         sm: 'w-8 h-8',
-        md: 'w-10 h-10 sm:w-12 sm:h-12',
-        lg: 'w-14 h-14 sm:w-16 sm:h-16',
-        xl: 'w-20 h-20 sm:w-24 sm:h-24',
+        md: 'w-10 h-10 sm:w-11 sm:h-11',
+        lg: 'w-12 h-12 sm:w-14 sm:h-14',
+        xl: 'w-16 h-16 sm:w-20 sm:h-20',
     };
 
-    return (
-        <Link
-            to="/"
-            className={`inline-flex items-center gap-2.5 group focus:outline-none ${className}`}
-        >
-            {/* Circle Logo Wrapper */}
-            <div className={`relative rounded-full overflow-hidden shrink-0 shadow-sm ring-2 ring-red-500/20 group-hover:ring-red-600 transition-all duration-300 ${sizeClasses[size]}`}>
-                <img
-                    src={LOGO_SRC}
-                    alt="শপিং হাট"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+    const iconSizes = {
+        sm: 'w-4 h-4',
+        md: 'w-5 h-5 sm:w-6 sm:h-6',
+        lg: 'w-6 h-6 sm:w-7 sm:h-7',
+        xl: 'w-8 h-8 sm:w-10 sm:h-10',
+    };
+
+    const Content = (
+        <div className={`inline-flex items-center gap-2.5 group cursor-pointer ${className}`}>
+            {/* SVG/CSS Driven Premium Circle Logo */}
+            <div className={`relative rounded-xl bg-linear-to-tr from-red-600 via-red-500 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-red-500/20 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-red-500/30 transition-all duration-300 ${sizeClasses[size]}`}>
+                <ShoppingBag className={`stroke-[2.2] transition-transform duration-300 group-hover:-rotate-6 ${iconSizes[size]}`} />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
             </div>
 
-            {/* Optional Side Text / Brand Name */}
+            {/* Brand Text */}
             {showText && (
                 <div className="flex flex-col">
-                    <span className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight group-hover:text-red-600 transition-colors leading-none">
-                        শপিং হাট
+                    <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none group-hover:text-red-600 transition-colors">
+                        শপিং <span className="text-red-600">হাট</span>
                     </span>
-                    <span className="text-[10px] text-slate-500 font-medium tracking-wider uppercase mt-0.5">
+                    <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">
                         E-Commerce
                     </span>
                 </div>
             )}
+        </div>
+    );
+
+    if (!isLink) {
+        return Content;
+    }
+
+    return (
+        <Link to="/" className="focus:outline-none inline-block">
+            {Content}
         </Link>
     );
 };
