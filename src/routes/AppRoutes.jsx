@@ -5,6 +5,7 @@ import { Cart } from '../pages/Cart';
 import { Login } from '../pages/Login';
 import { Checkout } from '../pages/Checkout';
 import { ProductDetails } from '../pages/ProductDetails';
+import { Wishlist } from '../pages/Wishlist';
 
 export const AppRoutes = () => {
     return (
@@ -15,6 +16,7 @@ export const AppRoutes = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="*" element={<div className="p-8 text-center">404 Not Found</div>} />
         </Routes>
     );
