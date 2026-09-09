@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Search, ShoppingBag, Heart, User, Menu, Smartphone, ChevronDown } from 'lucide-react';
-import { toggleMobileMenu, toggleCartDrawer } from '../../store/slices/uiSlice';
+import { Search, ShoppingBag, Heart, User, Menu, Smartphone, ChevronDown, X } from 'lucide-react';
+import { toggleCartDrawer } from '../../store/slices/uiSlice';
 import { selectCartTotalCount } from '../../store/slices/cartSlice';
+import { Logo } from '../common/Logo';
 
 const NAV_ITEMS = [
     { name: 'হোম', path: '/' },
@@ -22,11 +23,13 @@ export const Header = () => {
     const navigate = useNavigate();
     const cartCount = useSelector(selectCartTotalCount);
     const [searchQuery, setSearchQuery] = useState('');
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
             navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+            setMobileMenuOpen(false); // সার্চ করার পর মোবাইল মেনু বন্ধ হবে
         }
     };
 
@@ -52,23 +55,21 @@ export const Header = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                 <div className="flex items-center justify-between gap-4 md:gap-8">
 
-                    {/* Mobile Hamburger Toggle */}
-                    <button
-                        onClick={() => dispatch(toggleMobileMenu())}
-                        className="p-1.5 text-slate-700 hover:text-primary-900 md:hidden"
-                        aria-label="Toggle Menu"
-                    >
-                        <Menu className="w-6 h-6" />
-                    </button>
+                    {/* Mobile Hamburger Toggle & Logo */}
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+                            aria-label="Toggle Menu"
+                        >
+                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
 
-                    {/* Logo */}
-                    <Link to="/" className="flex items-center gap-1 flex-shrink-0">
-                        <span className="text-2xl font-black tracking-tight text-primary-900">
-                            LIFESTYLE<span className="text-accent-500">.</span>
-                        </span>
-                    </Link>
+                        {/* Circular Logo */}
+                        <Logo size="md" showText={true} />
+                    </div>
 
-                    {/* Search Bar - Center */}
+                    {/* Search Bar - Desktop */}
                     <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl relative">
                         <input
                             type="text"
@@ -132,8 +133,8 @@ export const Header = () => {
                 </div>
             </div>
 
-            {/* Navigation Links Bar */}
-            <nav className="hidden md:block border-t border-surface-100 bg-white">
+            {/* Desktop Navigation Links */}
+            <nav className="hidden lg:block border-t border-surface-100 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <ul className="flex items-center gap-6 text-sm font-medium text-slate-700 py-2.5 overflow-x-auto no-scrollbar">
                         {NAV_ITEMS.map((item, index) => (
@@ -150,6 +151,67 @@ export const Header = () => {
                     </ul>
                 </div>
             </nav>
+
+            {/* Mobile Menu Drawer (নতুন যুক্ত করা অংশ) */}
+            {mobileMenuOpen && (
+                <div className="lg:hidden fixed inset-0 z-50 flex">
+                    {/* Backdrop Overlay */}
+                    <div
+                        className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
+                        onClick={() => setMobileMenuOpen(false)}
+                    />
+
+                    {/* Drawer Content */}
+                    <div className="relative w-4/5 max-w-xs bg-white h-full shadow-xl flex flex-col z-10">
+                        {/* Drawer Header */}
+                        <div className="p-4 border-b border-surface-200 flex items-center justify-between">
+                            <Logo size="sm" showText={true} />
+                            <button
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="p-1 rounded-md text-slate-500 hover:bg-slate-100"
+                                aria-label="Close menu"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* Mobile Nav Links List */}
+                        <div className="flex-1 overflow-y-auto py-4 px-4 space-y-1">
+                            {NAV_ITEMS.map((item, index) => (
+                                <Link
+                                    key={index}
+                                    to={item.path}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="flex items-center justify-between py-2.5 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-surface-100 hover:text-primary-900 transition-colors"
+                                >
+                                    <span>{item.name}</span>
+                                    {item.hasDropdown && <ChevronDown className="w-4 h-4 text-slate-400" />}
+                                </Link>
+                            ))}
+
+                            <hr className="my-3 border-surface-200" />
+
+                            {/* Extra Mobile Actions */}
+                            <Link
+                                to="/wishlist"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-surface-100"
+                            >
+                                <Heart className="w-4 h-4 text-slate-500" />
+                                <span>উইশলিস্ট</span>
+                            </Link>
+                            <Link
+                                to="/login"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="flex items-center gap-3 py-2.5 px-3 rounded-lg text-sm font-medium text-slate-700 hover:bg-surface-100"
+                            >
+                                <User className="w-4 h-4 text-slate-500" />
+                                <span>সাইন ইন / অ্যাকাউন্ট</span>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };

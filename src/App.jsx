@@ -1,6 +1,8 @@
 import React from 'react';
 import { Header } from './components/layout/Header';
 import { AppRoutes } from './routes/AppRoutes';
+import { Footer } from './components/layout/Footer';
+import { AppDownloadBanner } from './components/common/AppDownloadBanner';
 
 export default function App() {
   return (
@@ -9,9 +11,8 @@ export default function App() {
       <main className="flex-1">
         <AppRoutes />
       </main>
-      <footer className="bg-slate-900 text-slate-400 py-8 text-center text-sm">
-        © {new Date().getFullYear()} Premium Lifestyle E-Commerce. All rights reserved.
-      </footer>
+      <AppDownloadBanner />
+      <Footer />
     </div>
   );
 }
