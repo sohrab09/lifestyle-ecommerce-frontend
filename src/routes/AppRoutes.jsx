@@ -11,11 +11,18 @@ import { Wishlist } from '../pages/Wishlist';
 
 // Customer Dashboard Pages
 import { UserDashboard } from '../pages/dashboard/UserDashboard';
+import { MyOrders } from '../pages/dashboard/MyOrders';
+import { AddressManagement } from '../pages/dashboard/AddressManagement';
 
 // Admin Dashboard Pages
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
-import { MyOrders } from '../pages/dashboard/MyOrders';
-import { AddressManagement } from '../pages/dashboard/AddressManagement';
+import { CategoryAddPage } from '../pages/admin/CategoryAddPage';
+import { ProductAddPage } from '../pages/admin/ProductAddPage';
+import { OrderListPage } from '../pages/admin/OrderListPage';
+import { SalesReportPage } from '../pages/admin/SalesReportPage';
+import { StockManagementPage } from '../pages/admin/StockManagementPage';
+import { AdvancedReportsPage } from '../pages/admin/AdvancedReportsPage';
+import { UserManagementPage } from '../pages/admin/UserManagementPage';
 
 export const AppRoutes = () => {
     return (
@@ -29,16 +36,23 @@ export const AppRoutes = () => {
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/wishlist" element={<Wishlist />} />
 
-            {/* Customer Dashboard Route */}
+            {/* Customer Dashboard Routes */}
             <Route path="/dashboard" element={<UserDashboard />} />
             <Route path="/dashboard/orders" element={<MyOrders />} />
             <Route path="/dashboard/address" element={<AddressManagement />} />
 
-            {/* Admin Dashboard Route */}
+            {/* Admin Dashboard Routes */}
             <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/categories" element={<CategoryAddPage />} />
+            <Route path="/admin/products/add" element={<ProductAddPage />} />
+            <Route path="/admin/orders" element={<OrderListPage />} />
+            <Route path="/admin/sales" element={<SalesReportPage />} />
+            <Route path="/admin/stock" element={<StockManagementPage />} />
+            <Route path="/admin/reports" element={<AdvancedReportsPage />} />
+            <Route path="/admin/users" element={<UserManagementPage />} />
 
             {/* 404 Route */}
-            <Route path="*" element={<div className="p-8 text-center">404 Not Found</div>} />
+            <Route path="*" element={<div className="p-8 text-center font-bold text-slate-600">404 Not Found</div>} />
         </Routes>
     );
 };
