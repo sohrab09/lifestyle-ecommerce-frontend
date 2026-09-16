@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Trash2, Heart, Plus, Minus, Info } from 'lucide-react';
+import {
+    Trash2,
+    Heart,
+    Plus,
+    Minus,
+    Info,
+    ShoppingBag,
+    ArrowRight,
+    Tag,
+    ShieldCheck,
+    Truck,
+    ArrowLeft,
+    Sparkles
+} from 'lucide-react';
 
 export const Cart = () => {
     const navigate = useNavigate();
@@ -30,7 +43,9 @@ export const Cart = () => {
     ]);
 
     const [couponCode, setCouponCode] = useState('');
+    const [couponApplied, setCouponApplied] = useState(false);
     const deliveryFee = 79;
+    const FREE_SHIPPING_THRESHOLD = 10000;
 
     // Quantity Handlers
     const handleQuantityChange = (id, change) => {
@@ -57,156 +72,256 @@ export const Cart = () => {
 
     // Calculations
     const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const total = cartItems.length > 0 ? subtotal + deliveryFee : 0;
+    const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+    const finalDeliveryFee = isFreeShipping ? 0 : deliveryFee;
+    const total = cartItems.length > 0 ? subtotal + finalDeliveryFee : 0;
+    const progressPercentage = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+
+    const handleApplyCoupon = (e) => {
+        e.preventDefault();
+        if (couponCode.trim()) {
+            setCouponApplied(true);
+        }
+    };
 
     return (
-        <div className="bg-white min-h-screen py-8">
+        <div className="bg-slate-50/60 min-h-screen py-10 font-sans">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+                {/* Top Header */}
+                <div className="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                            শপিং কার্ট
+                        </h1>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                            আপনার ব্যাগে মোট {cartItems.length} টি আইটেম রয়েছে
+                        </p>
+                    </div>
+                    <Link
+                        to="/products"
+                        className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 px-4 py-2 rounded-xl transition-all shadow-sm"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        <span>কেনাকাটা চালিয়ে যান</span>
+                    </Link>
+                </div>
+
                 {cartItems.length === 0 ? (
-                    <div className="text-center py-16">
-                        <h2 className="text-xl font-bold text-slate-800 mb-4">আপনার শপিং ব্যাগ খালি</h2>
+                    /* Empty State UI */
+                    <div className="text-center py-20 bg-white rounded-3xl border border-slate-200/80 p-8 shadow-sm max-w-lg mx-auto">
+                        <div className="w-20 h-20 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-amber-600 shadow-inner">
+                            <ShoppingBag className="w-10 h-10 stroke-[1.5]" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2">আপনার শপিং ব্যাগ খালি!</h2>
+                        <p className="text-slate-500 text-sm mb-8 leading-relaxed max-w-xs mx-auto">
+                            আপনি এখনও কোনো পণ্য যুক্ত করেননি। আমাদের নতুন প্রিমিয়াম কালেকশনগুলো ঘুরে দেখুন।
+                        </p>
                         <Link
                             to="/products"
-                            className="inline-block bg-red-600 text-white text-sm font-semibold px-6 py-2.5 rounded-md hover:bg-red-700 transition-colors"
+                            className="inline-flex items-center gap-2 bg-slate-900 hover:bg-emerald-600 text-white text-sm font-semibold px-8 py-3.5 rounded-xl transition-all shadow-lg shadow-slate-900/10 hover:shadow-emerald-600/20 active:scale-95"
                         >
-                            কেনাকাটা শুরু করুন
+                            <span>কেনাকাটা শুরু করুন</span>
+                            <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>
                 ) : (
                     <div className="flex flex-col lg:flex-row gap-8 items-start">
 
                         {/* Left Section: Cart Items */}
-                        <div className="w-full lg:w-2/3">
+                        <div className="w-full lg:w-2/3 space-y-4">
+
+                            {/* Free Shipping Tracker */}
+                            <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm">
+                                <div className="flex items-center justify-between text-xs font-bold text-slate-800 mb-2">
+                                    <span className="flex items-center gap-2 text-slate-700">
+                                        <Truck className="w-4 h-4 text-emerald-600" />
+                                        {isFreeShipping ? (
+                                            <span className="text-emerald-600">অভিনন্দন! আপনি ফ্রি শিপিং পাচ্ছেন! 🎉</span>
+                                        ) : (
+                                            <span>
+                                                আর <strong className="text-slate-900">৳{(FREE_SHIPPING_THRESHOLD - subtotal).toLocaleString('bn-BD')}</strong> কেনাকাটা করলে <strong className="text-emerald-600">ফ্রি শিপিং</strong>!
+                                            </span>
+                                        )}
+                                    </span>
+                                    <span className="text-slate-500 font-mono text-[11px]">{Math.round(progressPercentage)}%</span>
+                                </div>
+                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                    <div
+                                        className="bg-emerald-500 h-full rounded-full transition-all duration-500 ease-out"
+                                        style={{ width: `${progressPercentage}%` }}
+                                    />
+                                </div>
+                            </div>
+
                             {/* Header Bar */}
-                            <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-6">
-                                <h1 className="text-lg font-bold text-slate-900">শপিং ব্যাগ</h1>
+                            <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm flex items-center justify-between">
+                                <span className="text-sm font-bold text-slate-800">পণ্যের তালিকা</span>
                                 <button
                                     onClick={handleClearAll}
-                                    className="flex items-center gap-1 text-xs text-slate-500 hover:text-red-600 transition-colors"
+                                    className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-rose-600 transition-colors bg-slate-50 hover:bg-rose-50 px-3 py-1.5 rounded-lg border border-slate-100 hover:border-rose-100"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
-                                    <span>Clear All</span>
+                                    <span>সব মুছে ফেলুন</span>
                                 </button>
                             </div>
 
                             {/* Items List */}
-                            <div className="divide-y divide-slate-100">
+                            <div className="space-y-3">
                                 {cartItems.map((item) => (
-                                    <div key={item.id} className="py-5 flex items-start justify-between gap-4">
-                                        <div className="flex gap-4">
+                                    <div
+                                        key={item.id}
+                                        className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+                                    >
+                                        <div className="flex items-center gap-4">
                                             {/* Thumbnail */}
-                                            <div className="w-16 h-20 bg-slate-100 rounded border border-slate-200 overflow-hidden flex-shrink-0">
-                                                <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                            <div className="w-20 h-24 sm:w-20 sm:h-20 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                />
                                             </div>
 
                                             {/* Details */}
-                                            <div className="space-y-2">
-                                                <h3 className="text-sm font-medium text-slate-800 leading-snug">
-                                                    {item.title} <span className="text-slate-500 font-normal">X {item.quantity}</span>
+                                            <div className="space-y-1">
+                                                <h3 className="text-sm font-bold text-slate-800 leading-snug hover:text-emerald-600 transition-colors">
+                                                    {item.title}
                                                 </h3>
+                                                <p className="text-xs text-slate-400">একক মূল্য: ৳{item.price.toLocaleString('bn-BD')}</p>
 
-                                                {/* Quantity Counter */}
-                                                <div className="flex items-center gap-2 border border-slate-200 rounded w-fit px-2 py-0.5 text-slate-600">
-                                                    <button
-                                                        onClick={() => handleQuantityChange(item.id, -1)}
-                                                        className="hover:text-red-600 p-0.5"
-                                                    >
-                                                        <Minus className="w-3 h-3" />
-                                                    </button>
-                                                    <span className="text-xs font-semibold px-2">{item.quantity}</span>
-                                                    <button
-                                                        onClick={() => handleQuantityChange(item.id, 1)}
-                                                        className="hover:text-red-600 p-0.5"
-                                                    >
-                                                        <Plus className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-
-                                                {/* Action Icons */}
-                                                <div className="flex items-center gap-3 pt-1">
+                                                {/* Action Buttons: Wishlist & Delete */}
+                                                <div className="flex items-center gap-3 pt-2">
                                                     <button
                                                         onClick={() => handleRemoveItem(item.id)}
-                                                        className="text-slate-400 hover:text-red-600 transition-colors"
-                                                        title="Delete"
+                                                        className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-rose-600 transition-colors"
                                                     >
-                                                        <Trash2 className="w-4 h-4" />
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                        <span>সরান</span>
                                                     </button>
-                                                    <button
-                                                        className="text-slate-400 hover:text-red-600 transition-colors"
-                                                        title="Wishlist"
-                                                    >
-                                                        <Heart className="w-4 h-4" />
+                                                    <span className="text-slate-200">|</span>
+                                                    <button className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-amber-600 transition-colors">
+                                                        <Heart className="w-3.5 h-3.5" />
+                                                        <span>উইশলিস্টে রাখুন</span>
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Price */}
-                                        <div className="text-right flex-shrink-0">
-                                            <span className="text-sm font-bold text-slate-900">৳{(item.price * item.quantity).toLocaleString('bn-BD')}</span>
+                                        {/* Controls & Price */}
+                                        <div className="flex items-center justify-between sm:justify-end gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                                            {/* Quantity Counter */}
+                                            <div className="flex items-center border border-slate-200 rounded-xl bg-slate-50/80 shadow-sm overflow-hidden">
+                                                <button
+                                                    onClick={() => handleQuantityChange(item.id, -1)}
+                                                    className="p-2 text-slate-600 hover:bg-slate-200 transition-colors"
+                                                >
+                                                    <Minus className="w-3.5 h-3.5" />
+                                                </button>
+                                                <span className="text-xs font-bold px-3 text-slate-900 font-mono">
+                                                    {item.quantity}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleQuantityChange(item.id, 1)}
+                                                    className="p-2 text-slate-600 hover:bg-slate-200 transition-colors"
+                                                >
+                                                    <Plus className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+
+                                            {/* Total Item Price */}
+                                            <div className="text-right">
+                                                <span className="text-base font-black text-slate-900">
+                                                    ৳{(item.price * item.quantity).toLocaleString('bn-BD')}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
-                            </div>
-
-                            {/* Checkout Button */}
-                            <div className="mt-8">
-                                <button
-                                    onClick={() => navigate('/checkout')}
-                                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3.5 px-6 rounded-md transition-colors text-center text-sm shadow-sm"
-                                >
-                                    অর্ডার করতে এগিয়ে যান
-                                </button>
                             </div>
                         </div>
 
                         {/* Right Section: Order Summary */}
                         <div className="w-full lg:w-1/3">
-                            <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-5 shadow-sm">
+                            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6 shadow-sm sticky top-6">
 
-                                {/* Subtotal */}
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-slate-600">মোট দাম</span>
-                                    <span className="font-semibold text-slate-800">৳{subtotal.toLocaleString('bn-BD')}</span>
-                                </div>
+                                <h2 className="text-base font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-amber-500" />
+                                    <span>অর্ডার সামারি</span>
+                                </h2>
 
-                                <hr className="border-slate-100" />
-
-                                {/* Delivery Fee */}
-                                <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-1.5 text-slate-600">
-                                        <span>ডেলিভারি ফি</span>
-                                        <Info className="w-3.5 h-3.5 text-slate-400 cursor-pointer" />
+                                {/* Breakdown */}
+                                <div className="space-y-3.5 text-xs">
+                                    <div className="flex items-center justify-between text-slate-600">
+                                        <span>উপমোট (Subtotal)</span>
+                                        <span className="font-bold text-slate-800 text-sm">৳{subtotal.toLocaleString('bn-BD')}</span>
                                     </div>
-                                    <span className="font-semibold text-slate-800">৳{deliveryFee.toLocaleString('bn-BD')}</span>
+
+                                    <div className="flex items-center justify-between text-slate-600">
+                                        <div className="flex items-center gap-1.5">
+                                            <span>ডেলিভারি ফি</span>
+                                            <Info className="w-3.5 h-3.5 text-slate-400 cursor-pointer" />
+                                        </div>
+                                        {isFreeShipping ? (
+                                            <span className="font-bold text-emerald-600">ফ্রি</span>
+                                        ) : (
+                                            <span className="font-bold text-slate-800">৳{deliveryFee.toLocaleString('bn-BD')}</span>
+                                        )}
+                                    </div>
+
+                                    {couponApplied && (
+                                        <div className="flex items-center justify-between text-emerald-600">
+                                            <span>কুপন ডিসকাউন্ট</span>
+                                            <span className="font-bold">-৳১৫০</span>
+                                        </div>
+                                    )}
+
+                                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                        <span className="text-sm font-bold text-slate-900">সর্বমোট (Total)</span>
+                                        <span className="text-xl font-black text-slate-900">
+                                            ৳{(couponApplied ? total - 150 : total).toLocaleString('bn-BD')}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <hr className="border-slate-100" />
-
-                                {/* Grand Total */}
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="font-bold text-slate-800">সর্বমোট</span>
-                                    <span className="font-bold text-slate-900 text-base">৳{total.toLocaleString('bn-BD')}</span>
-                                </div>
-
-                                {/* Coupon Code Section */}
-                                <div className="pt-2">
+                                {/* Coupon Code Input */}
+                                <form onSubmit={handleApplyCoupon} className="space-y-2 pt-2">
+                                    <label className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+                                        <Tag className="w-3.5 h-3.5 text-slate-400" />
+                                        <span>কুপন কোড ব্যবহার করুন</span>
+                                    </label>
                                     <div className="flex items-center gap-2">
                                         <input
                                             type="text"
-                                            placeholder="Enter your coupon code"
+                                            placeholder="কুপন কোড লিখুন"
                                             value={couponCode}
                                             onChange={(e) => setCouponCode(e.target.value)}
-                                            className="flex-1 border border-slate-200 rounded-md px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-red-500"
+                                            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-800 transition-colors"
                                         />
                                         <button
-                                            type="button"
-                                            className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-md transition-colors"
+                                            type="submit"
+                                            className="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-sm active:scale-95"
                                         >
-                                            Apply
+                                            অ্যাপ্লাই
                                         </button>
                                     </div>
+                                </form>
+
+                                {/* Checkout Button */}
+                                <div className="pt-2">
+                                    <button
+                                        onClick={() => navigate('/checkout')}
+                                        className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95"
+                                    >
+                                        <span>অর্ডার করতে এগিয়ে যান</span>
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                {/* Security Assurance */}
+                                <div className="pt-2 flex items-center justify-center gap-2 text-slate-500 text-[11px]">
+                                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                                    <span>নিরাপদ পেমেন্ট ও এনক্রিপ্টেড চেকআউট</span>
                                 </div>
 
                             </div>
