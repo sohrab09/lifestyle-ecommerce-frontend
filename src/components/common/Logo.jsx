@@ -29,7 +29,7 @@ export const Logo = ({ size = 'md', showText = true, isLink = true, className = 
             {showText && (
                 <div className="flex flex-col">
                     <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-none group-hover:text-red-600 transition-colors">
-                        শপিং <span className="text-red-600">হাট</span>
+                        শপি <span className="text-red-600">হাট</span>
                     </span>
                     <span className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-1">
                         E-Commerce

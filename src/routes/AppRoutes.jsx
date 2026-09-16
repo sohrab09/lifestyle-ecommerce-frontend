@@ -14,6 +14,8 @@ import { UserDashboard } from '../pages/dashboard/UserDashboard';
 
 // Admin Dashboard Pages
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
+import { MyOrders } from '../pages/dashboard/MyOrders';
+import { AddressManagement } from '../pages/dashboard/AddressManagement';
 
 export const AppRoutes = () => {
     return (
@@ -29,6 +31,8 @@ export const AppRoutes = () => {
 
             {/* Customer Dashboard Route */}
             <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/dashboard/orders" element={<MyOrders />} />
+            <Route path="/dashboard/address" element={<AddressManagement />} />
 
             {/* Admin Dashboard Route */}
             <Route path="/admin" element={<AdminDashboardPage />} />
